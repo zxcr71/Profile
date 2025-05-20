@@ -1,0 +1,211 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>NuOrbit - Personal Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Fira+Mono:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }html, body {
+  font-family: 'Orbitron', sans-serif;
+  height: 100%;
+  overflow: hidden;
+  scroll-behavior: smooth;
+  background: url('background1.jpg') no-repeat center center;
+  background-size: cover;
+}
+
+@media (max-width: 768px) {
+  body {
+    background: url('background2.jpg') no-repeat center center;
+    background-size: cover;
+  }
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  padding-top: 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero h1 {
+  font-size: 60px;
+  color: white;
+  text-shadow: 0 0 20px #00f2ff, 0 0 30px #00f2ff;
+  animation: thunder 1.5s infinite;
+  margin-bottom: 20px;
+  z-index: 2;
+}
+
+@keyframes thunder {
+  0%, 100% { text-shadow: 0 0 10px #00f2ff, 0 0 20px #00f2ff; }
+  50% { text-shadow: 0 0 40px #00f2ff, 0 0 60px #00f2ff; }
+}
+
+.about {
+  font-family: 'Fira Mono', monospace;
+  font-size: 20px;
+  color: #ccc;
+  font-weight: 700;
+  white-space: pre-wrap;
+  max-width: 90%;
+  text-align: center;
+  margin-top: 20px;
+  min-height: 4em;
+}
+
+.terminal-box {
+  margin-top: 30px;
+  width: 90%;
+  max-width: 600px;
+  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  border-radius: 10px;
+  padding: 20px;
+  font-family: 'Fira Mono', monospace;
+  color: #00ffcc;
+  font-size: 16px;
+  text-align: left;
+  overflow: hidden;
+  min-height: 160px;
+}
+
+.thunder-bolt {
+  position: absolute;
+  bottom: -100px;
+  width: 50px;
+  height: 100px;
+  background: url('thunderbolt.png') no-repeat center center;
+  background-size: contain;
+  animation: boltUp 3s linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes boltUp {
+  0% {
+    transform: translateY(0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-120vh);
+    opacity: 0;
+  }
+}
+
+.sidebar {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px 0 0 10px;
+  z-index: 2;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+  padding: 20px 22px;
+  font-size: 28px;
+  transition: all 0.3s ease;
+}
+
+.sidebar a:hover {
+  background-color: #a64aff;
+  box-shadow: -4px 0 15px #a64aff;
+  border-radius: 10px 0 0 10px;
+}
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 40px;
+  }
+
+  .about {
+    font-size: 14px;
+  }
+}
+
+  </style>
+</head><body>
+  <audio id="bgMusic" loop>
+    <source src="mus.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>  <section class="hero">
+    <div class="thunder-bolt" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="thunder-bolt" style="left: 30%; animation-delay: 1s;"></div>
+    <div class="thunder-bolt" style="left: 60%; animation-delay: 1.5s;"></div>
+    <div class="thunder-bolt" style="left: 85%; animation-delay: 2s;"></div>
+    <h1>Z XC R</h1>
+    <div class="about" id="aboutText"></div>
+    <div class="terminal-box" id="terminalText"></div>
+  </section>  <div class="sidebar">
+    <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+    <a href="https://t.me" target="_blank"><i class="fab fa-telegram"></i></a>
+    <a href="http://yourtorlink.onion" target="_blank"><i class="fas fa-globe"></i></a>
+  </div>  <script>
+    const about = document.getElementById("aboutText");
+    const terminal = document.getElementById("terminalText");
+    const aboutPhrases = [
+      "about:                         My socials on left.                    status:> active",
+      "Ethical Experiments",
+      "Hidden Realm of the Deep"
+    ];
+    const terminalText = `> Starting sequence...
+> Loading deep module anonymous...
+> you are in ...
+> think twice...
+> check the browser icon on left, not for dumb people......you dumbass stay away keep fixing the typo error`;
+
+    let currentPhrase = 0;
+    let currentChar = 0;
+    let deleting = false;
+
+    function typeEffect() {
+      const text = aboutPhrases[currentPhrase];
+
+      if (deleting) {
+        about.innerHTML = text.substring(0, currentChar--);
+        if (currentChar < 0) {
+          deleting = false;
+          currentPhrase = (currentPhrase + 1) % aboutPhrases.length;
+        }
+      } else {
+        about.innerHTML = text.substring(0, currentChar++);
+        if (currentChar > text.length) {
+          setTimeout(() => deleting = true, 1000);
+          return;
+        }
+      }
+      setTimeout(typeEffect, deleting ? 40 : 80);
+    }
+
+    function typeTerminalText(i = 0) {
+      if (i < terminalText.length) {
+        terminal.innerHTML += terminalText.charAt(i);
+        setTimeout(() => typeTerminalText(i + 1), 50);
+      }
+    }
+
+    window.addEventListener("load", () => {
+      const bgMusic = document.getElementById("bgMusic");
+      bgMusic.play().catch(() => {
+        document.body.addEventListener("click", () => bgMusic.play(), { once: true });
+      });
+      setTimeout(typeEffect, 1000);
+      setTimeout(() => typeTerminalText(), 2500);
+    });
+  </script></body></html>
