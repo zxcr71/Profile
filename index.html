@@ -1,211 +1,626 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>NuOrbit - Personal Portfolio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Fira+Mono:wght@700&display=swap" rel="stylesheet" />
+  <title>Z XC R // TERMINAL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }html, body {
-  font-family: 'Orbitron', sans-serif;
-  height: 100%;
-  overflow: hidden;
-  scroll-behavior: smooth;
-  background: url('background1.jpg') no-repeat center center;
-  background-size: cover;
-}
+    :root {
+      --cyan: #00f2ff;
+      --purple: #a64aff;
+      --red: #ff2244;
+      --green: #00ff88;
+      --dark: #04040a;
+      --mono: 'Share Tech Mono', monospace;
+      --display: 'Orbitron', sans-serif;
+    }
 
-@media (max-width: 768px) {
-  body {
-    background: url('background2.jpg') no-repeat center center;
-    background-size: cover;
-  }
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  text-align: center;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
-  padding-top: 80px;
-  position: relative;
-  overflow: hidden;
-}
+    /* ── CURSOR ── */
+    *, *::before, *::after { cursor: none !important; }
+    #cursor {
+      position: fixed;
+      width: 12px; height: 12px;
+      background: var(--cyan);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 14px var(--cyan), 0 0 30px var(--cyan);
+      transition: transform 0.08s ease;
+    }
+    #cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(0,242,255,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.2s, height 0.2s, opacity 0.2s;
+    }
 
-.hero h1 {
-  font-size: 60px;
-  color: white;
-  text-shadow: 0 0 20px #00f2ff, 0 0 30px #00f2ff;
-  animation: thunder 1.5s infinite;
-  margin-bottom: 20px;
-  z-index: 2;
-}
+    html, body {
+      font-family: var(--mono);
+      height: 100%;
+      overflow: hidden;
+      background: var(--dark);
+    }
 
-@keyframes thunder {
-  0%, 100% { text-shadow: 0 0 10px #00f2ff, 0 0 20px #00f2ff; }
-  50% { text-shadow: 0 0 40px #00f2ff, 0 0 60px #00f2ff; }
-}
+    /* ── BACKGROUND ── */
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      background: url('background1.jpg') no-repeat center center / cover;
+      filter: brightness(0.28) saturate(1.3);
+      z-index: 0;
+    }
+    @media (max-width: 768px) {
+      .bg-layer { background-image: url('background2.jpg'); }
+    }
 
-.about {
-  font-family: 'Fira Mono', monospace;
-  font-size: 20px;
-  color: #ccc;
-  font-weight: 700;
-  white-space: pre-wrap;
-  max-width: 90%;
-  text-align: center;
-  margin-top: 20px;
-  min-height: 4em;
-}
+    /* ── SCANLINES ── */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,0.18) 3px,
+        rgba(0,0,0,0.18) 4px
+      );
+      pointer-events: none;
+      animation: scanShift 8s linear infinite;
+    }
+    @keyframes scanShift {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 100px; }
+    }
 
-.terminal-box {
-  margin-top: 30px;
-  width: 90%;
-  max-width: 600px;
-  background: rgba(0, 0, 0, 0.3);
-  border: none;
-  border-radius: 10px;
-  padding: 20px;
-  font-family: 'Fira Mono', monospace;
-  color: #00ffcc;
-  font-size: 16px;
-  text-align: left;
-  overflow: hidden;
-  min-height: 160px;
-}
+    /* ── VIGNETTE ── */
+    .vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
+      pointer-events: none;
+    }
 
-.thunder-bolt {
-  position: absolute;
-  bottom: -100px;
-  width: 50px;
-  height: 100px;
-  background: url('thunderbolt.png') no-repeat center center;
-  background-size: contain;
-  animation: boltUp 3s linear infinite;
-  opacity: 0.8;
-}
+    /* ── RAIN CANVAS ── */
+    #rain { position: fixed; inset: 0; z-index: 3; pointer-events: none; opacity: 0.18; }
 
-@keyframes boltUp {
-  0% {
-    transform: translateY(0);
-    opacity: 0.8;
-  }
-  100% {
-    transform: translateY(-120vh);
-    opacity: 0;
-  }
-}
+    /* ── GLITCH LINES ── */
+    .glitch-line {
+      position: fixed;
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      z-index: 4;
+      pointer-events: none;
+      animation: glitchLine 6s infinite;
+      opacity: 0;
+    }
+    .glitch-line:nth-child(2) { animation-delay: 2.3s; background: linear-gradient(90deg, transparent, var(--purple), transparent); }
+    .glitch-line:nth-child(3) { animation-delay: 4.1s; background: linear-gradient(90deg, transparent, var(--red), transparent); }
+    @keyframes glitchLine {
+      0%   { top: 0%; opacity: 0; }
+      2%   { opacity: 1; }
+      40%  { top: 100%; opacity: 0.6; }
+      42%  { opacity: 0; }
+      100% { opacity: 0; }
+    }
 
-.sidebar {
-  position: fixed;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.6);
-  padding: 20px 0;
-  display: flex;
-  flex-direction: column;
-  border-radius: 10px 0 0 10px;
-  z-index: 2;
-}
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      padding-top: 70px;
+      overflow: hidden;
+    }
 
-.sidebar a {
-  color: white;
-  text-decoration: none;
-  padding: 20px 22px;
-  font-size: 28px;
-  transition: all 0.3s ease;
-}
+    /* ── HEADER BAR ── */
+    .top-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 44px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(4,4,10,0.7);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,242,255,0.12);
+    }
+    .top-bar-left {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(0,242,255,0.5);
+      letter-spacing: 2px;
+    }
+    .top-bar-right {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(0,242,255,0.5);
+      letter-spacing: 2px;
+    }
+    .blink { animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
 
-.sidebar a:hover {
-  background-color: #a64aff;
-  box-shadow: -4px 0 15px #a64aff;
-  border-radius: 10px 0 0 10px;
-}
+    /* ── TITLE ── */
+    .title-wrap {
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(48px, 10vw, 90px);
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      position: relative;
+      user-select: none;
+    }
+    .hero-title::before,
+    .hero-title::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+    }
+    .hero-title::before {
+      color: var(--cyan);
+      clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+      animation: glitchTop 4s infinite;
+    }
+    .hero-title::after {
+      color: var(--purple);
+      clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+      animation: glitchBot 4s infinite;
+    }
+    @keyframes glitchTop {
+      0%, 90%, 100% { transform: translate(0,0); opacity: 0; }
+      91% { transform: translate(-4px, -2px); opacity: 1; }
+      93% { transform: translate(4px, 0); opacity: 1; }
+      95% { transform: translate(-2px, 1px); opacity: 1; }
+      97% { transform: translate(0,0); opacity: 0; }
+    }
+    @keyframes glitchBot {
+      0%, 85%, 100% { transform: translate(0,0); opacity: 0; }
+      86% { transform: translate(3px, 2px); opacity: 1; }
+      88% { transform: translate(-3px, 0); opacity: 1; }
+      90% { transform: translate(1px, -1px); opacity: 1; }
+      92% { transform: translate(0,0); opacity: 0; }
+    }
 
-@media (max-width: 768px) {
-  .hero h1 {
-    font-size: 40px;
-  }
+    /* ── SUBTITLE TAG ── */
+    .hero-sub {
+      font-family: var(--mono);
+      font-size: clamp(10px, 1.8vw, 14px);
+      color: rgba(0,242,255,0.6);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+    }
 
-  .about {
-    font-size: 14px;
-  }
-}
+    /* ── TYPEWRITER ── */
+    .about-text {
+      font-family: var(--mono);
+      font-size: clamp(13px, 2vw, 18px);
+      color: #ccc;
+      max-width: 600px;
+      text-align: center;
+      min-height: 2.4em;
+      padding: 0 20px;
+      letter-spacing: 1px;
+    }
+    .cursor-inline {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: var(--cyan);
+      vertical-align: text-bottom;
+      animation: blink 0.8s step-end infinite;
+      margin-left: 2px;
+    }
 
+    /* ── TERMINAL BOX ── */
+    .terminal-box {
+      margin-top: 24px;
+      width: 92%;
+      max-width: 620px;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(0,242,255,0.18);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0,242,255,0.06), inset 0 0 40px rgba(0,0,0,0.4);
+    }
+    .terminal-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: rgba(0,242,255,0.05);
+      border-bottom: 1px solid rgba(0,242,255,0.1);
+    }
+    .t-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .t-dot.r { background: #ff5f57; }
+    .t-dot.y { background: #febc2e; }
+    .t-dot.g { background: #28c840; }
+    .t-title {
+      margin-left: 6px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 2px;
+      font-family: var(--mono);
+    }
+    .terminal-body {
+      padding: 16px 20px;
+      font-family: var(--mono);
+      font-size: clamp(11px, 1.5vw, 14px);
+      color: var(--green);
+      line-height: 1.8;
+      min-height: 140px;
+      text-align: left;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      background: rgba(4,4,10,0.75);
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+      border-radius: 10px 0 0 10px;
+      border: 1px solid rgba(0,242,255,0.1);
+      border-right: none;
+      z-index: 20;
+      backdrop-filter: blur(12px);
+    }
+    .sidebar a {
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      padding: 16px 20px;
+      font-size: 22px;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+    .sidebar a::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: var(--cyan);
+      transform: scaleY(0);
+      transition: transform 0.25s ease;
+    }
+    .sidebar a:hover {
+      color: var(--cyan);
+      background: rgba(0,242,255,0.07);
+      text-shadow: 0 0 12px var(--cyan);
+    }
+    .sidebar a:hover::before { transform: scaleY(1); }
+
+    /* ── CORNER DECORATIONS ── */
+    .corner {
+      position: fixed;
+      width: 50px; height: 50px;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .corner.tl { top: 50px; left: 10px; border-top: 1px solid var(--cyan); border-left: 1px solid var(--cyan); opacity: 0.4; }
+    .corner.tr { top: 50px; right: 60px; border-top: 1px solid var(--cyan); border-right: 1px solid var(--cyan); opacity: 0.4; }
+    .corner.bl { bottom: 10px; left: 10px; border-bottom: 1px solid var(--cyan); border-left: 1px solid var(--cyan); opacity: 0.4; }
+    .corner.br { bottom: 10px; right: 60px; border-bottom: 1px solid var(--cyan); border-right: 1px solid var(--cyan); opacity: 0.4; }
+
+    /* ── STATUS STRIP ── */
+    .status-strip {
+      position: fixed;
+      bottom: 0; left: 0; right: 60px;
+      height: 26px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      background: rgba(4,4,10,0.8);
+      border-top: 1px solid rgba(0,242,255,0.1);
+      gap: 24px;
+      overflow: hidden;
+    }
+    .status-item {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: rgba(0,242,255,0.45);
+      letter-spacing: 1.5px;
+      white-space: nowrap;
+    }
+    .status-item span { color: var(--green); }
+    .marquee-wrap { flex: 1; overflow: hidden; }
+    .marquee-text {
+      display: inline-block;
+      white-space: nowrap;
+      animation: marquee 20s linear infinite;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: rgba(166,74,255,0.5);
+      letter-spacing: 2px;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* ── MUSIC BTN ── */
+    #musicBtn {
+      position: fixed;
+      bottom: 36px;
+      left: 16px;
+      z-index: 20;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(0,242,255,0.25);
+      border-radius: 50%;
+      width: 38px; height: 38px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--cyan);
+      font-size: 14px;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+    #musicBtn:hover {
+      background: rgba(0,242,255,0.1);
+      box-shadow: 0 0 14px var(--cyan);
+    }
+    #musicBtn.playing { color: var(--purple); border-color: rgba(166,74,255,0.4); }
+
+    /* ── ENTRY ANIMATION ── */
+    .hero-title { animation: titleReveal 1s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .hero-sub    { animation: titleReveal 1s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .about-text  { animation: titleReveal 1s 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .terminal-box { animation: titleReveal 1s 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    @keyframes titleReveal {
+      from { opacity: 0; transform: translateY(24px); filter: blur(6px); }
+      to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar a { padding: 14px 16px; font-size: 20px; }
+      .corner.tr, .corner.br { right: 50px; }
+      .status-strip { right: 50px; }
+    }
   </style>
-</head><body>
-  <audio id="bgMusic" loop>
-    <source src="Vivaldi Four Seasons Winter.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>  <section class="hero">
-    <div class="thunder-bolt" style="left: 10%; animation-delay: 0s;"></div>
-    <div class="thunder-bolt" style="left: 30%; animation-delay: 1s;"></div>
-    <div class="thunder-bolt" style="left: 60%; animation-delay: 1.5s;"></div>
-    <div class="thunder-bolt" style="left: 85%; animation-delay: 2s;"></div>
-    <h1>Z XC R</h1>
-    <div class="about" id="aboutText"></div>
-    <div class="terminal-box" id="terminalText"></div>
-  </section>  <div class="sidebar">
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- Background -->
+  <div class="bg-layer"></div>
+  <canvas id="rain"></canvas>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+
+  <!-- Glitch sweep lines -->
+  <div class="glitch-line"></div>
+  <div class="glitch-line"></div>
+  <div class="glitch-line"></div>
+
+  <!-- Corner brackets -->
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="top-bar-left">SYS::ZXCR_TERMINAL &nbsp;[v1.0.7]</div>
+    <div class="top-bar-right">STATUS:<span style="color:var(--green)">ONLINE</span> &nbsp;<span class="blink">▮</span></div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="title-wrap">
+      <h1 class="hero-title" data-text="Z XC R">Z XC R</h1>
+    </div>
+    <p class="hero-sub">[ DEEP WEB // ACTIVE // ANONYMOUS ]</p>
+    <div class="about-text" id="aboutText"><span class="cursor-inline"></span></div>
+    <div class="terminal-box">
+      <div class="terminal-titlebar">
+        <div class="t-dot r"></div>
+        <div class="t-dot y"></div>
+        <div class="t-dot g"></div>
+        <span class="t-title">root@zxcr:~$</span>
+      </div>
+      <div class="terminal-body" id="terminalText"></div>
+    </div>
+  </section>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
     <a href="https://www.instagram.com/zxcr_terminal" target="_blank"><i class="fab fa-instagram"></i></a>
     <a href="https://t.me/Zxcrmainbot" target="_blank"><i class="fab fa-telegram"></i></a>
     <a href="https://kf2rzuxtr4lydutn37xxmdfhplqv4kqswgtta7hhndtip37e6sdra3id.onion/" target="_blank"><i class="fas fa-globe"></i></a>
-  </div>  <script>
-    const about = document.getElementById("aboutText");
-    const terminal = document.getElementById("terminalText");
-    const aboutPhrases = [
-      "about:                         My socials on right.                    status:> active",
-      "Ethical Experiments",
-      "Hidden Realm of the Deep"
-    ];
-    const terminalText = `> Starting sequence...
-> Loading deep module anonymous...
-> you are in ...
-> think twice...
-> check the browser icon on right, not for dumb people......you dumbass stay away keep fixing the typo error`;
+  </div>
 
-    let currentPhrase = 0;
-    let currentChar = 0;
-    let deleting = false;
+  <!-- Music button -->
+  <button id="musicBtn" title="Toggle music"><i class="fas fa-music"></i></button>
 
-    function typeEffect() {
-      const text = aboutPhrases[currentPhrase];
+  <!-- Status strip -->
+  <div class="status-strip">
+    <div class="status-item">LAT: <span id="latVal">--</span></div>
+    <div class="status-item">LON: <span id="lonVal">--</span></div>
+    <div class="marquee-wrap">
+      <span class="marquee-text">// ENTERING THE VOID // ENCRYPTED // ANONYMOUS // THINK TWICE // NOT FOR THE FAINT-HEARTED // DEEP MODULE ACTIVE // SIGNAL LOST // RECONNECTING //</span>
+    </div>
+  </div>
 
-      if (deleting) {
-        about.innerHTML = text.substring(0, currentChar--);
-        if (currentChar < 0) {
-          deleting = false;
-          currentPhrase = (currentPhrase + 1) % aboutPhrases.length;
-        }
-      } else {
-        about.innerHTML = text.substring(0, currentChar++);
-        if (currentChar > text.length) {
-          setTimeout(() => deleting = true, 1000);
-          return;
-        }
-      }
-      setTimeout(typeEffect, deleting ? 40 : 80);
+  <audio id="bgMusic" loop>
+    <source src="Vivaldi_Four_Seasons_Winter.mp3" type="audio/mpeg">
+    <source src="mus.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // ── CUSTOM CURSOR ──
+    const cur = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animCursor() {
+      cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animCursor);
     }
+    animCursor();
 
-    function typeTerminalText(i = 0) {
-      if (i < terminalText.length) {
-        terminal.innerHTML += terminalText.charAt(i);
-        setTimeout(() => typeTerminalText(i + 1), 50);
-      }
-    }
-
-    window.addEventListener("load", () => {
-      const bgMusic = document.getElementById("bgMusic");
-      bgMusic.play().catch(() => {
-        document.body.addEventListener("click", () => bgMusic.play(), { once: true });
+    // ── RAIN ──
+    const canvas = document.getElementById('rain');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+    const drops = Array.from({length: 120}, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      speed: 2 + Math.random() * 5,
+      len: 10 + Math.random() * 30,
+      opacity: 0.2 + Math.random() * 0.5,
+      char: ''
+    }));
+    const chars = '01アイウエオカキクケコサシスセソタ0110█▓░';
+    function drawRain() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drops.forEach(d => {
+        ctx.font = `${10 + Math.random()*4}px Share Tech Mono`;
+        ctx.fillStyle = `rgba(0,242,255,${d.opacity * 0.4})`;
+        ctx.fillText(chars[Math.floor(Math.random()*chars.length)], d.x, d.y);
+        d.y += d.speed;
+        if (d.y > canvas.height) { d.y = -20; d.x = Math.random() * canvas.width; }
       });
-      setTimeout(typeEffect, 1000);
-      setTimeout(() => typeTerminalText(), 2500);
+      requestAnimationFrame(drawRain);
+    }
+    drawRain();
+
+    // ── TYPEWRITER ──
+    const aboutEl = document.getElementById('aboutText');
+    const phrases = [
+      'My socials are on the right →',
+      'Ethical Experiments. Hidden Realm.',
+      'You are in the deep. Think twice.',
+      'Not for dumb people. Stay away.'
+    ];
+    let pi = 0, ci = 0, deleting = false;
+    function type() {
+      const txt = phrases[pi];
+      if (deleting) {
+        aboutEl.innerHTML = txt.substring(0, ci--) + '<span class="cursor-inline"></span>';
+        if (ci < 0) { deleting = false; pi = (pi + 1) % phrases.length; }
+      } else {
+        aboutEl.innerHTML = txt.substring(0, ci++) + '<span class="cursor-inline"></span>';
+        if (ci > txt.length) { setTimeout(() => { deleting = true; }, 1800); return; }
+      }
+      setTimeout(type, deleting ? 35 : 75);
+    }
+
+    // ── TERMINAL TYPER ──
+    const termEl = document.getElementById('terminalText');
+    const lines = [
+      '> Initializing secure channel...',
+      '> Loading deep module: <span style="color:#a64aff">anonymous</span>',
+      '> Bypassing firewall layer 3...',
+      '> You are in. <span style="color:#ff2244">Think twice.</span>',
+      '> Check browser icon → not for the weak.',
+      '> <span style="color:rgba(255,255,255,0.3)">// signal encrypted. watching.</span>'
+    ];
+    let li = 0;
+    function typeLine() {
+      if (li >= lines.length) return;
+      const p = document.createElement('p');
+      termEl.appendChild(p);
+      let i = 0;
+      const raw = lines[li];
+      // strip tags for char count
+      const plain = raw.replace(/<[^>]+>/g,'');
+      function typeChar() {
+        if (i <= plain.length) {
+          // Build display: typed portion + inject html at right spots
+          p.innerHTML = interpolateHTML(raw, i);
+          i++;
+          setTimeout(typeChar, 40);
+        } else {
+          li++;
+          setTimeout(typeLine, 300);
+        }
+      }
+      typeChar();
+    }
+
+    function interpolateHTML(html, charCount) {
+      // Show charCount visible chars, preserving html tags
+      let visible = 0, out = '', inTag = false;
+      for (let i = 0; i < html.length; i++) {
+        const c = html[i];
+        if (c === '<') { inTag = true; out += c; continue; }
+        if (c === '>') { inTag = false; out += c; continue; }
+        if (inTag) { out += c; continue; }
+        if (visible < charCount) { out += c; visible++; }
+        else break;
+      }
+      // close any open tags naively
+      return out;
+    }
+
+    // ── GEOLOCATION SPOOF ──
+    function randomCoord(base, spread) {
+      return (base + (Math.random() - 0.5) * spread).toFixed(4);
+    }
+    setInterval(() => {
+      document.getElementById('latVal').innerText = randomCoord(28.6, 30) + '°N';
+      document.getElementById('lonVal').innerText = randomCoord(77.2, 30) + '°E';
+    }, 2000);
+
+    // ── MUSIC ──
+    const music = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    let playing = false;
+    function tryPlay() {
+      music.play().then(() => {
+        playing = true;
+        musicBtn.classList.add('playing');
+      }).catch(() => {});
+    }
+    musicBtn.addEventListener('click', () => {
+      if (playing) { music.pause(); playing = false; musicBtn.classList.remove('playing'); }
+      else { tryPlay(); }
     });
-  </script></body></html>
+
+    // ── INIT ──
+    window.addEventListener('load', () => {
+      setTimeout(type, 1200);
+      setTimeout(typeLine, 2000);
+      setTimeout(tryPlay, 500);
+    });
+    document.body.addEventListener('click', () => { if (!playing) tryPlay(); }, { once: true });
+  </script>
+</body>
+</html>
